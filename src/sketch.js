@@ -27,10 +27,10 @@ function drawSoundIndicator()
 
     // set indicator transparency
     soundOn ? tint(255, 100) : tint(255, 255);
-   
+
     // draw image
     image(keyboard, 0, 0, 50, 50);
-    
+
     // pop transformation matrix
     pop();
 }
@@ -41,8 +41,8 @@ function drawSoundIndicator()
 * Returns:
 *   undefined;
 */
-function preload() 
-{  
+function preload()
+{
     // load soundtrack song
     soundtrack = loadSound('assets/audio/da_beat-nr1.mp3');
 
@@ -52,7 +52,7 @@ function preload()
 
 /**
  * p5.js mouse clicked callback.
- * 
+ *
  * Returns:
  *  undefined.
  */

@@ -6,12 +6,12 @@ class Terrain
 {
     /**
      * I initialize myself.
-     * 
+     *
      * Args:
      *  width (number): terrain width
      *  height (number): terrain height
      *  resolution (number): terrain resolution
-     * 
+     *
      * Returns:
      *  undefined.
      */
@@ -29,7 +29,7 @@ class Terrain
 
     /**
      * I return my number of rows.
-     * 
+     *
      * Returns:
      *  _ (number): number of rows
      */
@@ -40,7 +40,7 @@ class Terrain
 
     /**
      * I return my number of columns.
-     * 
+     *
      * Returns:
      *  _ (number): number of columns
      */
@@ -51,7 +51,7 @@ class Terrain
 
     /**
      * I load my initial state.
-     * 
+     *
      * Returns:
      *  undefined.
      */
@@ -62,7 +62,7 @@ class Terrain
 
     /**
      * I load my initial perlin noise space state.
-     * 
+     *
      * Returns:
      *  undefined.
      */
@@ -77,10 +77,10 @@ class Terrain
 
     /**
      * I update the terrain state in one step.
-     * 
+     *
      * Args:
      *  step(Object): x and y dimensions space coordinates step size
-     * 
+     *
      * Returns:
      *  undefined.
      */
@@ -88,7 +88,7 @@ class Terrain
     {
         // initialize perlin noise space current coordinates
         let coordinates = {x: 0, y: 0};
-        
+
         // update terrain
         coordinates.y = this.seed;
         for(let row = 0; row < this.rows; row++)
@@ -108,7 +108,7 @@ class Terrain
 
     /**
      * I render this terrain state.
-     * 
+     *
      * Returns:
      *  undefined.
      */
@@ -139,7 +139,7 @@ class Terrain
                 vertex(column * this.resolution, row * this.resolution, this.terrain[column][row]);
                 vertex(column * this.resolution, (row + 1) * this.resolution, this.terrain[column][row + 1]);
             }
-            
+
             // stop drawing triangles strip
             endShape();
         }
