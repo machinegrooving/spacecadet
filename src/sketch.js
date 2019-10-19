@@ -13,23 +13,28 @@ let soundtrack;
 
 /**
  * I draw this sketch sound indicator.
- * 
+ *
+ * Args:
+ *  indicator (object): indicator image
+ *  toggled (boolean): indicator toggle status
+ *  position (number): position in the indicators stack (1 is lowest)
+ *
  * Returns:
  *  undefined.
  */
-function drawSoundIndicator()
+function drawIndicator(indicator, toggled, position)
 {
     // push transformation matrix
     push();
 
     // translate to bottom right corner
-    translate((WIDTH / 2) - 50, (HEIGHT / 2) - 50);
+    translate((WIDTH / 2) - position * 50, (HEIGHT / 2) - position * 50);
 
     // set indicator transparency
-    soundOn ? tint(255, 100) : tint(255, 255);
+    toggled ? tint(255, 100) : tint(255, 255);
 
     // draw image
-    image(keyboard, 0, 0, 50, 50);
+    image(indicator, 0, 0, 50, 50);
 
     // pop transformation matrix
     pop();
@@ -103,5 +108,5 @@ function draw()
     terrain.render();
 
     // draw soundtrack indicator
-    drawSoundIndicator();
+    drawIndicator(keyboard, soundOn, 1);
 }
