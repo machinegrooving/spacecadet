@@ -1,6 +1,10 @@
 /**
-* CONSTANTS AND DEFINITIONS
+* DEFINITIONS
 */
+
+// perlin noise terrain container
+let terrain;
+
 // soundtrack p5.SoundFile container
 let soundtrack;
 
@@ -23,11 +27,18 @@ function preload() {
  */
 function setup()
 {
-  // create dummy canvas
-  createCanvas(1, 1);
+    // set sketch frame rate
+    frameRate(FRAME_RATE);
 
-  // play soundtrack in a loop
-  soundtrack.loop();
+    // create canvas and set renderer as WEBGL
+    createCanvas(WIDTH, HEIGHT, WEBGL);
+
+    // play soundtrack in a loop
+    soundtrack.loop();
+
+    // setup terrain
+    terrain = new Terrain(WIDTH + WIDTH_OFFSET, HEIGHT + HEIGHT, RESOLUTION);
+    terrain.setup();
 }
 
 /**
@@ -38,5 +49,12 @@ function setup()
  */
 function draw()
 {
+    // set background color
+    background(...BACKGROUND_COLOR);
 
+    // update terrain
+    terrain.update({x: 0.2, y: 0.2, speed: 0.18});
+
+    // draw terrain
+    terrain.render();
 }
