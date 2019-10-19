@@ -5,6 +5,9 @@
 // sound controller container
 let soundOn = false;
 
+// Fast Fourier Transform container
+let fft;
+
 // soundtrack p5.SoundFile container
 let soundtrack;
 
@@ -16,6 +19,12 @@ let webcamOn = false;
 
 // perlin noise terrain container
 let terrain;
+
+// audio pan (left/right)
+let pan = 0;
+
+// moving to the right or to the left
+let pan_direction = 1;
 
 // mouse click actions
 const clickActions = [
@@ -30,7 +39,7 @@ const clickActions = [
 ];
 
 /**
- * I draw this sketch sound indicator.
+ * I draw a sketch indicator.
  *
  * Args:
  *  indicator (object): indicator image
@@ -134,7 +143,7 @@ function toggleSound()
     soundOn = !soundOn;
 
     // update soundtrack state
-    soundOn ? soundtrack.loop() : soundtrack.stop();
+    soundOn ? soundtrack.loop() : soundtrack.pause();
 }
 
 /**
@@ -193,6 +202,13 @@ function setup()
     // set sketch frame rate
     frameRate(FRAME_RATE);
 
+    // setup amplitude helper in smooth mode
+    amplitude = new p5.Amplitude();
+    amplitude.smooth(SMOOTH_SCALE);
+
+    // setup Fast Fourier Transform with 16 frequency bands
+    fft = new p5.FFT(0.4, 16);
+
     // create canvas and set renderer as WEBGL
     createCanvas(WIDTH, HEIGHT, WEBGL);
 
@@ -212,8 +228,32 @@ function draw()
     // set background color
     background(...BACKGROUND_COLOR);
 
+    const stepParams = {x: 0.2, y: 0.2, speed: 0.18}
+
+    // soundtrack is playing: change animation
+    if(soundOn)
+    {
+        // vary terrain speed based on sound amplitude
+        stepParams.speed = map(amplitude.getLevel(), 0, 1, AUDIO_TO_SPEED.min, AUDIO_TO_SPEED.max);
+
+        // change the sound pan
+        alterPan();
+
+        // get sound amplitude values of frequency spectrum
+        let spectrum = fft.analyze();
+
+        // change colors based on analyzed spectrum
+        BACKGROUND_COLOR[0] = (spectrum[0] + spectrum[1]) / 2;
+        BACKGROUND_COLOR[1] = (spectrum[2] + spectrum[3]) / 2;
+        BACKGROUND_COLOR[2] = (spectrum[4] + spectrum[5]) / 2;
+        TERRAIN_COLOR[0] = (spectrum[6] + spectrum[7] + spectrum[8]) / 5;
+        TERRAIN_COLOR[1] = (spectrum[9] + spectrum[10] + spectrum[11]) / 4;
+        TERRAIN_COLOR[2] = (spectrum[12] + spectrum[13] + spectrum[14]) / 4;
+        TERRAIN_COLOR[3] = Math.max(spectrum[15], 80);
+    }
+
     // update terrain
-    terrain.update({x: 0.2, y: 0.2, speed: 0.18});
+    terrain.update(stepParams);
 
     // draw terrain
     terrain.render();
@@ -229,4 +269,29 @@ function draw()
 
     // draw webcam input
     drawWebcamInput(3);
+}
+
+/**
+ * I change the audio pan over time.
+ *
+ * Returns:
+ *  undefined.
+ */
+function alterPan()
+{
+    // make target slightly above threshold to avoid getting stuck on extremes
+    let target = (PAN_THRESHOLD * 1.5) * pan_direction
+
+    /// interpolate previous pan value in direction of the threshold on amplitude
+    pan = lerp(pan, target, amplitude.getLevel() * PAN_STEP_FACTOR);
+
+    // pan value is above threshold: change pan direction
+    if(pan * pan_direction >= PAN_THRESHOLD)
+    {
+        // invert pan direction
+        pan_direction = pan_direction * -1;
+    }
+
+    // assign new pan value to soundtrack
+    soundtrack.pan(pan);
 }
