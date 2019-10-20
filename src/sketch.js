@@ -11,12 +11,6 @@ let fft;
 // soundtrack p5.SoundFile container
 let soundtrack;
 
-// webcam stream container
-let webcam;
-
-// webcam controller container
-let webcamOn = false;
-
 // perlin noise terrain container
 let terrain;
 
@@ -31,10 +25,6 @@ const clickActions = [
     {
         position: 1,
         callback: toggleSound,
-    },
-    {
-        position: 2,
-        callback: toggleWebcam
     }
 ];
 
@@ -67,48 +57,6 @@ function drawIndicator(indicator, toggled, position)
     pop();
 }
 
-/**
- * Draw webcam input on sketch.
- *
- * Args:
- *  position (number): position on indicators stack
- *
- * Returns:
- *  undefined.
- */
-function drawWebcamInput(position)
-{
-    // webcam is activated: draw input
-    if(webcamOn)
-    {
-        // push transformation matrix
-        push();
-
-        // translate to indicators stack
-        translate((WIDTH / 2) - 50, (HEIGHT / 2) - position * 50);
-
-        // apply transparency
-        tint(200, 100);
-
-        // draw webcam input
-        image(webcam, 0, 0, 50, 50);
-
-        // pop transformation matrix
-        pop();
-    }
-}
-
-/**
- * I update the webcam functioning status.
- *
- * Returns:
- *  undefined.
- */
-function updateWebcamStatus()
-{
-    webcamOn = webcam.loadedmetadata;
-}
-
 /**Sound
 * p5.js preload callback.
 *
@@ -122,13 +70,6 @@ function preload()
 
     // load keyboard image
     keyboard = loadImage('assets/images/keyboard.png');
-
-    // load film row image
-    filmreel = loadImage('assets/images/filmreel.png')
-
-    // create webcam capture
-    webcam = createCapture(VIDEO);
-    webcam.hide();
 }
 
 /**
@@ -144,33 +85,6 @@ function toggleSound()
 
     // update soundtrack state
     soundOn ? soundtrack.loop() : soundtrack.pause();
-}
-
-/**
- * I handle a webcam toggle action.
- *
- * Returns:
- *  undefined.
- */
-function toggleWebcam()
-{
-    // webcam is enabled: pause it and set state as disabled
-    if(webcamOn)
-    {
-        // pause webcam stream
-        webcam.pause();
-
-        // set state as disabled
-        webcam.loadedmetadata = false;
-    }
-
-    // webcam is disabled: recreate capture
-    else
-    {
-        // create webcam capture
-        webcam = createCapture(VIDEO);
-        webcam.hide();
-    }
 }
 
 /**
@@ -258,17 +172,8 @@ function draw()
     // draw terrain
     terrain.render();
 
-    // update webcam status
-    updateWebcamStatus();
-
     // draw soundtrack indicator
     drawIndicator(keyboard, soundOn, 1);
-
-    // draw webcam indicator
-    drawIndicator(filmreel, webcamOn, 2);
-
-    // draw webcam input
-    drawWebcamInput(3);
 }
 
 /**
